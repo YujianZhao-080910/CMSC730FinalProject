@@ -1,1 +1,1 @@
-# CMSC730FinalProject
+# CMSC730FinalProject -- Elder Emergency Wearable Devices
