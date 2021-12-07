@@ -7,6 +7,7 @@ WiFiServer server(80);
 
 String header;
 long height;
+long tap_active_cnt;
 
 void setup() {
   Serial.begin(9600);
@@ -44,8 +45,14 @@ void loop(){
             int pos = header.indexOf("height=");
             if (pos > 0) {
               Serial.println("Get user's height data!");
-              height = parseHeight(header, pos+7);
+              height = parseHeader(header, pos+7);
               Serial.println(height);
+            }
+            pos = header.indexOf("tap=");
+            if (pos > 0) {
+              Serial.println("Get tap times!");
+              tap_active_cnt = parseHeader(header, pos+4);
+              Serial.println(tap_active_cnt);
             }
             break;
           } else {
@@ -63,7 +70,7 @@ void loop(){
   }
 }
 
-long parseHeight(String header, int pos) {
+long parseHeader(String header, int pos) {
   int posStep = 0;
   for (; isDigit(header.charAt(pos+posStep)); posStep++);
   String heightStr = header.substring(pos, pos+posStep+1);
@@ -77,11 +84,11 @@ void displayHTML(WiFiClient client) {
   
   client.println("<body><h1>ESP32 Web Server</h1>");
   client.println("<form method=\"get\">");
-  client.println("<label for=\"height\"> Height (cm) </label>");
+  client.println("<label for=\"height\"> Please enter the length of your hand to the ground in cm: </label>");
   client.println("<input type=\"number\" id=\"height\" name=\"height\" min=\"0\">");
+  client.println("<label for=\"tap\"> Tap Times </label>");
+  client.println("<input type=\"number\"> id=\"tap\" name=\"tap\" min=\"1\">");
   client.println("<input type=\"submit\" value=\"SUBMIT\">");
   client.println("</form>");
   client.println();
-
-  
 }
